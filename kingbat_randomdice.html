@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>킹받는 주사위 게임</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f2f2f2;
+            transition: background-color 0.5s; /* 배경색 변화에 대한 전환 효과 */
+          }
+
+          .red-background {
+            background-color: red !important; /* 배경색을 빨간색으로 설정 */
+          }
+
+          h1 {
+            color: #333;
+          }
+      
+          p {
+            margin-bottom: 10px;
+          }
+      
+          #player-health, #enemy-health {
+            font-weight: bold;
+          }
+      
+          #result {
+            margin-top: 20px;
+            font-style: italic;
+          }
+      
+          .dice {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 1px solid black;
+            text-align: center;
+            margin-right: 5px;
+            background-color: #fff;
+            font-size: 20px;
+            line-height: 30px;
+          }
+      
+          button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 4px;
+          }
+      
+          button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+          }
+
+          .main-image {
+            width: 300px;
+            height: auto;
+            margin-top: 50px;
+            transition: transform 0.5s;
+          }
+
+          .main-image.shake {
+            animation: shake 0.5s;
+          }
+
+          @keyframes shake {
+            10%, 90% {
+              transform: translateX(-5px);
+            }
+            20%, 80% {
+              transform: translateX(5px);
+            }
+            30%, 50%, 70% {
+              transform: translateX(-3px);
+            }
+            40%, 60% {
+              transform: translateX(3px);
+            }
+          }
+        </style>
+      </head>
+<body>
+  <h1>킹받는 주사위 게임</h1>
+
+  <img src="P.jpg" alt="킹받는 사진" class="main-image">
+
+  <p>플레이어 체력: <span id="player-health">50</span></p>
+  <p>적 체력: <span id="enemy-health">50</span></p>
+  <p id="result"></p>
+  <button onclick="rollDice()">주사위 굴리기</button>
+
+  <script>
+    var playerHealth = 50;
+    var enemyHealth = 50;
+    var resultElement = document.getElementById("result");
+    var playerHealthElement = document.getElementById("player-health");
+    var enemyHealthElement = document.getElementById("enemy-health");
+    var mainImageElement = document.querySelector(".main-image");
+
+    function rollDice() {
+      var playerRoll = Math.floor(Math.random() * 10) + 1; // 플레이어의 주사위 굴리기
+      var enemyRoll = Math.floor(Math.random() * 10) + 1; // 상대방의 주사위 굴리기
+      
+      resultElement.innerHTML = "플레이어: " + playerRoll + "<br>김정헌 교수님: " + enemyRoll;
+
+      if (playerRoll > enemyRoll) {
+        resultElement.innerHTML += "<br>킹받음 -1";
+        mainImageElement.classList.add("shake"); // 사진에 흔들리는 효과를 추가
+        setTimeout(function() {
+            mainImageElement.classList.remove("shake");
+        }, 500);
+        enemyHealth -= playerRoll;
+      } else if (playerRoll < enemyRoll) {
+        resultElement.innerHTML += "<br>킹받음 +1";
+        playerHealth -= enemyRoll;
+        resultElement.innerHTML +=
+            "<br><em>김정헌 교수님:</em> 우리집 가훈이 뭐라고? 정신차리자.";
+            document.body.classList.add("red-background");
+            setTimeout(function () {
+                document.body.classList.remove("red-background");
+            }, 1000); // 2초 후에 배경색 원래대로 되돌리기
+      } else {
+        resultElement.innerHTML += "<br>비겼습니다!";
+      }
+
+      // 체력 업데이트
+      playerHealthElement.textContent = playerHealth;
+      enemyHealthElement.textContent = enemyHealth;
+
+      // 게임 종료 여부 확인
+      if (playerHealth <= 0) {
+        resultElement.innerHTML += "<br>패배 - 당신은 킹받음을 견디지 못했읍니다...";
+        disableButton();
+      } else if (enemyHealth <= 0) {
+        resultElement.innerHTML += "<br>승리 - 김정헌 교수님: 진정한 어른은...'용서'하는 것이다...";
+        disableButton();
+      }
+    }
+
+    function disableButton() {
+      var button = document.querySelector("button");
+      button.disabled = true;
+    }
+  </script>
+</body>
+</html>
